@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lako — Fotografia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0b0b0b;
+      --surface: #111111;
+      --surface2: #181818;
+      --border: rgba(255,255,255,0.08);
+      --accent: #c8a96e;
+      --accent2: #e8d5b0;
+      --text: #f0ede8;
+      --muted: #7a766f;
+      --nav-h: 72px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 56px;
+      z-index: 100;
+      transition: background 0.4s, backdrop-filter 0.4s, border-color 0.4s;
+      border-bottom: 1px solid transparent;
+    }
+    nav.scrolled {
+      background: rgba(11,11,11,0.94);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 40px; align-items: center; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.76rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: color 0.25s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.3s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta {
+      border: 1px solid var(--accent) !important;
+      color: var(--accent) !important;
+      padding: 8px 22px;
+      border-radius: 2px;
+      transition: background 0.3s, color 0.3s !important;
+    }
+    .nav-cta::after { display: none !important; }
+    .nav-cta:hover { background: var(--accent) !important; color: var(--bg) !important; }
+
+    /* ── HERO — lado a lado, sem sobreposição ── */
+    .hero {
+      padding-top: var(--nav-h);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: row;
+    }
+    .hero-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 64px 80px 56px;
+    }
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 5.5vw, 5.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.35s forwards;
+    }
+    .hero-title em { font-style: italic; color: var(--accent2); }
+    .hero-desc {
+      font-size: 0.95rem;
+      line-height: 1.85;
+      color: var(--muted);
+      max-width: 400px;
+      margin-bottom: 48px;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.5s forwards;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.65s forwards;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 14px 34px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: var(--accent2); transform: translateY(-2px); }
+    .btn-ghost {
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.3s;
+    }
+    .btn-ghost:hover { color: var(--text); }
+    .arrow { display: inline-block; transition: transform 0.3s; }
+    .btn-ghost:hover .arrow { transform: translateX(5px); }
+
+    .hero-right {
+    flex: 1.2; /* Aumenta a largura da imagem para a esquerda */
+    margin-top: 40px; /* Move a imagem para baixo */
+    position: relative; /* Permite o uso de 'left' para ajuste fino */
+    left: -20px; /* Move a imagem 20px extras para a esquerda */
+  
+    border-left: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeIn 1.2s 0.4s forwards;
+    }
+
+    .hero-upload-area {
+      width: 100%;
+      height: 100%;
+      background: var(--surface2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: background 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-upload-area:hover { background: #161616; }
+    .hero-upload-area img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .upload-hint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      position: relative;
+      z-index: 1;
+    }
+    .upload-hint.hidden { opacity: 0; }
+    .upload-icon-big { font-size: 3rem; color: rgba(200,169,110,0.35); line-height: 1; }
+    .upload-hint-text {
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── SECTION LABELS ── */
+    .section-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.9rem, 3.5vw, 3rem);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 48px;
+    }
+
+    /* ── PORTFÓLIO — grid 3 colunas, sem sobreposição ── */
+    #portfolio {
+      padding: 96px 56px;
+      background: var(--bg);
+    }
+    .portfolio-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 48px;
+    }
+    .portfolio-header .section-title { margin-bottom: 0; }
+    .filter-tabs { display: flex; gap: 6px; }
+    .filter-tab {
+      background: none;
+      border: 1px solid transparent;
+      color: var(--muted);
+      padding: 7px 18px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.73rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 2px;
+    }
+    .filter-tab.active, .filter-tab:hover { border-color: var(--accent); color: var(--accent); }
+
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .portfolio-cell {
+      aspect-ratio: 4 / 3;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: border-color 0.3s;
+    }
+    .portfolio-cell:hover { border-color: var(--accent); }
+    .portfolio-cell > img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.45s;
+    }
+    .portfolio-cell:hover > img { transform: scale(1.05); }
+    .cell-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .cell-placeholder .plus { font-size: 2.2rem; color: rgba(200,169,110,0.35); line-height: 1; }
+    .cell-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .cell-hover-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 55%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px 18px;
+    }
+    .portfolio-cell:hover .cell-hover-overlay { opacity: 1; }
+    .cell-hover-overlay span {
+      font-size: 0.67rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    /* ── ESTATÍSTICAS ── */
+    .stats-bar {
+      background: var(--surface2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 56px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .stat-item {
+      padding: 0 40px;
+      border-left: 1px solid var(--border);
+    }
+    .stat-item:first-child { border-left: none; padding-left: 0; }
+    .stat-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.2rem;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── DESTAQUES ── */
+    #featured {
+      padding: 96px 56px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .featured-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    .feat-cell {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: border-color 0.3s;
+    }
+    .feat-cell:hover { border-color: var(--accent); }
+    .feat-cell.tall { aspect-ratio: 3 / 4; }
+    .feat-cell.short { aspect-ratio: 16 / 9; }
+    .feat-cell > img {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.45s;
+    }
+    .feat-cell:hover > img { transform: scale(1.04); }
+    .feat-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .feat-placeholder .plus { font-size: 2rem; color: rgba(200,169,110,0.3); }
+    .feat-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+    .feat-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 18px 20px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.72));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .feat-cell:hover .feat-caption { opacity: 1; }
+    .feat-caption-title { font-family: 'Cormorant Garamond', serif; font-size: 1rem; margin-bottom: 4px; }
+    .feat-caption-cat { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+    .feat-right-col { display: flex; flex-direction: column; gap: 12px; }
+
+    /* ── SOBRE + FOOTER ── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .about-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      padding: 96px 56px 64px;
+      align-items: start;
+    }
+    .about-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.9rem, 3vw, 2.8rem);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 28px;
+    }
+    .about-bio {
+      color: var(--muted);
+      font-size: 0.93rem;
+      line-height: 1.9;
+      margin-bottom: 24px;
+    }
+    .about-signature {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-style: italic;
+      color: var(--accent2);
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+      margin-top: 8px;
+    }
+    .about-right { display: flex; flex-direction: column; gap: 16px; }
+    .about-photo {
+      aspect-ratio: 4 / 5;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: border-color 0.3s;
+    }
+    .about-photo:hover { border-color: var(--accent); }
+    .about-photo > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+    .about-photo-hint {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px;
+    }
+    .about-photo-hint .plus { font-size: 2.2rem; color: rgba(200,169,110,0.3); }
+    .hint-text { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+    .about-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .detail-item {
+      padding: 16px 18px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+    }
+    .detail-label { font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+    .detail-value { font-size: 0.88rem; color: var(--text); }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding: 28px 56px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-nav { display: flex; gap: 28px; }
+    .footer-nav a { color: var(--muted); text-decoration: none; font-size: 0.73rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.25s; }
+    .footer-nav a:hover { color: var(--accent); }
+    .footer-copy { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.06em; }
+    .social-links { display: flex; gap: 20px; }
+    .social-link { color: var(--muted); text-decoration: none; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.25s; }
+    .social-link:hover { color: var(--accent); }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 999;
+      background: rgba(0,0,0,0.96);
+      display: none; align-items: center; justify-content: center;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox > img { max-width: 90vw; max-height: 90vh; object-fit: contain; }
+    .lightbox-close {
+      position: absolute; top: 28px; right: 40px;
+      color: var(--muted); background: none; border: none;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+      cursor: pointer; transition: color 0.25s;
+    }
+    .lightbox-close:hover { color: var(--accent); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      nav { padding: 0 24px; }
+      .nav-links { gap: 16px; }
+      .hero { flex-direction: column; }
+      .hero-left { padding: 64px 24px 48px; }
+      .hero-right { min-height: 60vw; border-left: none; border-top: 1px solid var(--border); }
+      #portfolio, #featured, .footer-bottom { padding-left: 24px; padding-right: 24px; }
+      .about-section { padding-left: 24px; padding-right: 24px; }
+      .stats-bar { padding-left: 24px; padding-right: 24px; }
+      .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
+      .featured-layout { grid-template-columns: 1fr; }
+      .feat-cell.tall { aspect-ratio: 16/9; }
+      .about-section { grid-template-columns: 1fr; gap: 40px; }
+      .stats-bar { grid-template-columns: 1fr 1fr; }
+      .stat-item { padding: 24px 16px; border-left: none; border-top: 1px solid var(--border); }
+      .stat-item:first-child { border-top: none; }
+      .footer-bottom { flex-direction: column; gap: 18px; text-align: center; }
+      .footer-nav { flex-wrap: wrap; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <img id="lbImg" src="" alt="" />
+  <button class="lightbox-close" onclick="closeLb()">✕ Fechar</button>
+</div>
+
+<!-- ── NAV ── -->
+<nav id="mainNav">
+  <a href="#home" class="nav-logo">Lako<span> </span>Fotografia</a>
+  <div class="nav-links">
+    <a href="#portfolio">Portfólio</a>
+    <a href="#featured">Destaques</a>
+    <a href="#sobre">Sobre</a>
+    <a href="#sobre" class="nav-cta">Contato</a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<div class="hero" id="home">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Fotógrafo · Ivinhema, Brasil</p>
+    <h1 class="hero-title">A luz que<br><em>conta</em><br>histórias</h1>
+    <p class="hero-desc">Ser fotógrafo é ter a responsabilidade de contar uma história única para cada pessoa.</p>
+    <div class="hero-actions">
+      <a href="#portfolio" class="btn-primary">Ver Portfólio</a>
+      <a href="#sobre" class="btn-ghost">Sobre mim <span class="arrow">→</span></a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-upload-area" id="heroCover">
+      <img src="bebe.jpeg" alt="Foto de capa">
+    </div>>
+      <div class="upload-hint" id="heroCoverHint">
+       <div class="upload-icon-big"></div>
+        <div class="upload-hint-text"></div>
+      </div>
+    </div>
+    <input type="file" id="heroCoverInput" accept="image/*" style="display:none" onchange="loadHero(this)" />
+  </div>
+</div>
+
+<!-- ── PORTFÓLIO ── -->
+<section id="portfolio">
+  <div class="portfolio-header">
+    <div>
+      <p class="section-label">Trabalhos</p>
+      <h2 class="section-title">Portfólio</h2>
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-tab active">Todos</button>
+      <button class="filter-tab">Retratos</button>
+      <button class="filter-tab">Paisagens</button>
+      <button class="filter-tab">Eventos</button>
+    </div>
+  </div>
+  <div class="portfolio-grid" id="portfolioGrid"></div>
+</section>
+
+<!-- ── ESTATÍSTICAS ── -->
+<div class="stats-bar">
+  <div class="stat-item"><div class="stat-number" id="s1">0</div><div class="stat-label">Anos de experiência</div></div>
+  <div class="stat-item"><div class="stat-number" id="s2">0</div><div class="stat-label">Sessões realizadas</div></div>
+  <div class="stat-item"><div class="stat-number" id="s3">0</div><div class="stat-label">Cidades atendidas</div></div>
+  <div class="stat-item"><div class="stat-number" id="s4">0</div><div class="stat-label">Prêmios conquistados</div></div>
+</div>
+
+<!-- ── DESTAQUES ── -->
+<section id="featured">
+  <p class="section-label">Seleção especial</p>
+  <h2 class="section-title">Imagens em Destaque</h2>
+  <div class="featured-layout">
+    <!-- célula grande à esquerda -->
+    <div class="feat-cell tall" id="fc0" onclick="featClick(0)">
+      <div class="feat-placeholder" id="fp0"><span class="plus">◫</span><span class="feat-label">Destaque principal</span></div>
+      <div class="feat-caption"><div class="feat-caption-title">Título da Foto</div><div class="feat-caption-cat">Retrato · 2024</div></div>
+      <input type="file" id="ff0" accept="image/*" style="display:none" onchange="loadFeat(0,this)" />
+    </div>
+    <!-- coluna da direita: duas células empilhadas -->
+    <div class="feat-right-col">
+      <div class="feat-cell short" id="fc1" onclick="featClick(1)">
+        <div class="feat-placeholder" id="fp1"><span class="plus">◫</span><span class="feat-label">Destaque 2</span></div>
+        <div class="feat-caption"><div class="feat-caption-title">Título da Foto</div><div class="feat-caption-cat">Paisagem · 2024</div></div>
+        <input type="file" id="ff1" accept="image/*" style="display:none" onchange="loadFeat(1,this)" />
+      </div>
+      <div class="feat-cell short" id="fc2" onclick="featClick(2)">
+        <div class="feat-placeholder" id="fp2"><span class="plus">◫</span><span class="feat-label">Destaque 3</span></div>
+        <div class="feat-caption"><div class="feat-caption-title">Título da Foto</div><div class="feat-caption-cat">Evento · 2024</div></div>
+        <input type="file" id="ff2" accept="image/*" style="display:none" onchange="loadFeat(2,this)" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SOBRE + FOOTER ── -->
+<footer id="sobre">
+  <div class="about-section">
+    <div class="about-left">
+      <p class="section-label">Sobre o fotógrafo</p>
+      <h2 class="about-title">Sua história é <em style="font-style:italic;font-family:'Cormorant Garamond',serif">única</em><br>Minha luz a torna eterna.</h2>
+      <p class="about-bio">Minha jornada no mundo da fotografia começou cedo, aos 17 anos, em 1º de novembro de 1999. Desde os meus primeiros passos no laboratório, passando pela assistência de filmagem e fotografia, aprendi que cada detalhe é fundamental para eternizar um momento.</p>
+      <p class="about-bio">Após anos de dedicação e aprendizado constante, em 2012, nasceu Lako Fotografia. Hoje, com a experiência de quem já realizou mais de 1.000 eventos, encaro cada novo projeto com o mesmo entusiasmo do início, buscando sempre capturar a essência e a emoção de cada história que tenho a honra de contar.</p>
+      <div class="about-signature">Valdemir Zotesso</div>
+      <div class="about-left">
+      <a href="https://wa.me/66996527144" class="btn-primary" style="margin-top: 30px;">
+        Solicitar Orçamento
+      </a>
+    </div>
+    </div>
+    <div class="about-right">
+      <div class="about-photo" id="aboutPhoto">
+        <img src="foto.jpg.jpeg" alt="Foto do fotógrafo">
+        <div class="about-photo-hint" id="aboutHint">
+          <span class="plus">◫</span>
+          <span class="hint-text">Foto do fotógrafo</span>
+        </div>
+        <input type="file" id="aboutInput" accept="image/*" style="display:none" onchange="loadAbout(this)" />
+      </div>
+      <div class="about-details">
+        <div class="detail-item"><div class="detail-label">Localização</div><div class="detail-value">Ivinhema, MS</div></div>
+        <div class="detail-item"><div class="detail-label">Especialidade</div><div class="detail-value">Eventos, Casamentos, Aniversários, Ensaios</div></div>
+        <div class="detail-item"><div class="detail-label">Disponível</div><div class="detail-value">Seg — Sáb</div></div>
+        <div class="detail-item"><div class="detail-label">Contato</div><div class="detail-value">67 9 9652-7144</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 Lako Fotografia</p>
+    <div class="social-links">
+      <a href="https://www.instagram.com/lakofotografia/" class="social-link">Instagram</a>
+      <a href="https://wa.me/5567996527144" class="social-link">WhatsApp</a> 
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── Portfólio: 9 células uniformes ── */
+const labels = ['Casamento','Gravidas','Evento','Aniversário 15 anos','Noivos','Natureza','Aniversário','Aniversariantes','Street'];
+const grid = document.getElementById('portfolioGrid');
+labels.forEach((lbl, i) => {
+  const cell = document.createElement('div');
+  cell.className = 'portfolio-cell';
+  cell.id = 'pc' + i;
+  cell.dataset.category = lbl; // categoria para filtro
+  cell.innerHTML = `
+    <div class="cell-placeholder" id="pph${i}">
+      <span class="plus">◫</span>
+      <span class="cell-label">${lbl}</span>
+    </div>
+    <div class="cell-hover-overlay"><span>${lbl}</span></div>
+    <input type="file" id="pf${i}" accept="image/*" style="display:none" onchange="loadPc(${i},this)" />
+  `;
+  cell.addEventListener('click', () => pcClick(i));
+  grid.appendChild(cell);
+});
+
+function pcClick(i) {
+  const cell = document.getElementById('pc' + i);
+  const img = cell.querySelector('img');
+  if (img) openLb(img.src);
+  else document.getElementById('pf' + i).click();
+}
+function loadPc(i, input) {
+  if (!input.files[0]) return;
+  const r = new FileReader();
+  r.onload = e => {
+    const cell = document.getElementById('pc' + i);
+    document.getElementById('pph' + i).style.display = 'none';
+    let img = cell.querySelector('img');
+    if (!img) { img = document.createElement('img'); cell.insertBefore(img, cell.firstChild); }
+    img.src = e.target.result;
+    cell.onclick = () => openLb(img.src);
+  };
+  r.readAsDataURL(input.files[0]);
+}
+
+/* ── Hero ── */
+function loadHero(input) {
+  if (!input.files[0]) return;
+  const r = new FileReader();
+  r.onload = e => {
+    const area = document.getElementById('heroCover');
+    document.getElementById('heroCoverHint').classList.add('hidden');
+    let img = area.querySelector('img');
+    if (!img) { img = document.createElement('img'); area.appendChild(img); }
+    img.src = e.target.result;
+    area.onclick = () => openLb(img.src);
+  };
+  r.readAsDataURL(input.files[0]);
+}
+
+/* ── Destaques ── */
+function featClick(i) {
+  const cell = document.getElementById('fc' + i);
+  const img = cell.querySelector('img');
+  if (img) openLb(img.src);
+  else document.getElementById('ff' + i).click();
+}
+function loadFeat(i, input) {
+  if (!input.files[0]) return;
+  const r = new FileReader();
+  r.onload = e => {
+    const cell = document.getElementById('fc' + i);
+    document.getElementById('fp' + i).style.display = 'none';
+    let img = cell.querySelector('img');
+    if (!img) { img = document.createElement('img'); cell.insertBefore(img, cell.firstChild); }
+    img.src = e.target.result;
+    cell.onclick = () => openLb(img.src);
+  };
+  r.readAsDataURL(input.files[0]);
+}
+
+/* ── Sobre ── */
+function loadAbout(input) {
+  if (!input.files[0]) return;
+  const r = new FileReader();
+  r.onload = e => {
+    document.getElementById('aboutHint').style.display = 'none';
+    const ph = document.getElementById('aboutPhoto');
+    let img = ph.querySelector('img');
+    if (!img) { img = document.createElement('img'); ph.appendChild(img); }
+    img.src = e.target.result;
+  };
+  r.readAsDataURL(input.files[0]);
+}
+
+/* ── Lightbox ── */
+function openLb(src) { document.getElementById('lbImg').src = src; document.getElementById('lightbox').classList.add('open'); }
+function closeLb() { document.getElementById('lightbox').classList.remove('open'); }
+document.getElementById('lightbox').addEventListener('click', e => { if (e.target === e.currentTarget) closeLb(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
+
+/* ── Nav scroll ── */
+window.addEventListener('scroll', () => {
+  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+/* ── Filtros ── */
+function applyPortfolioFilter(category) {
+  const cards = document.querySelectorAll('.portfolio-cell');
+  cards.forEach(card => {
+    if (category === 'Todos' || card.dataset.category === category) {
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+document.querySelectorAll('.filter-tab').forEach(btn => {
+  btn.addEventListener('click', function () {
+    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    applyPortfolioFilter(this.textContent.trim());
+  });
+});
+
+/* ── Contadores ── */
+function countUp(el, target, dur) {
+  let v = 0; const step = target / (dur / 16);
+  const t = setInterval(() => {
+    v += step;
+    if (v >= target) { el.textContent = target + (target > 9 ? '+' : ''); clearInterval(t); }
+    else el.textContent = Math.floor(v) + (target > 9 ? '+' : '');
+  }, 16);
+}
+const obs = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) {
+    countUp(document.getElementById('s1'), 25, 1600);
+    countUp(document.getElementById('s2'), 1000, 2000);
+    countUp(document.getElementById('s3'), 20, 1600);
+    countUp(document.getElementById('s4'), 10, 1200);
+    obs.disconnect();
+  }
+}, { threshold: 0.5 });
+obs.observe(document.querySelector('.stats-bar'));
+</script>
+</body>
+</html>
