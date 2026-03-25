@@ -524,6 +524,37 @@
       .footer-bottom { flex-direction: column; gap: 18px; text-align: center; }
       .footer-nav { flex-wrap: wrap; justify-content: center; }
     }
+
+    @media (max-width: 600px) {
+      :root { --nav-h: 60px; }
+      nav { height: var(--nav-h); padding: 0 14px; }
+      .nav-logo { font-size: 1.1rem; }
+      .nav-links { gap: 10px; flex-wrap: wrap; justify-content: center; }
+      .nav-links a { font-size: 0.65rem; }
+
+      .hero { flex-direction: column; }
+      .hero-left { padding: 48px 16px 40px; text-align: center; }
+      .hero-title { font-size: clamp(2.5rem, 8vw, 4rem); }
+      .hero-desc { margin-inline: auto; max-width: 90%; }
+      .hero-actions { flex-direction: column; gap: 10px; align-items: center; }
+      .hero-right { min-height: 280px; border-left: none; border-top: 1px solid var(--border); margin-top: 16px; }
+
+      .portfolio-header, #portfolio, #featured, .about-section, .stats-bar, .footer-bottom { padding-left: 16px; padding-right: 16px; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .stats-bar { grid-template-columns: 1fr; padding: 28px 12px; }
+      .stat-item { padding: 18px 12px; border-left: none; border-top: 1px solid var(--border); }
+      .stat-item:first-child { border-top: none; }
+      .about-section { grid-template-columns: 1fr; gap: 32px; }
+      .about-photo { height: auto; min-height: 250px; }
+      .about-right .about-details { grid-template-columns: 1fr; }
+
+      .footer-bottom { flex-direction: column; gap: 14px; text-align: center; }
+      .footer-copy { font-size: 0.68rem; }
+      .social-links { justify-content: center; }
+
+      img { max-width: 100%; height: auto; }
+      button, .btn-primary, .btn-ghost { touch-action: manipulation; }
+    }
   </style>
 </head>
 <body>
@@ -559,9 +590,8 @@
   <div class="hero-right">
     <div class="hero-upload-area" id="heroCover">
       <img src="bebe.jpeg" alt="Foto de capa">
-    </div>>
       <div class="upload-hint" id="heroCoverHint">
-       <div class="upload-icon-big"></div>
+        <div class="upload-icon-big"></div>
         <div class="upload-hint-text"></div>
       </div>
     </div>
