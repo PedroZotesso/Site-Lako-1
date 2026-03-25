@@ -83,6 +83,25 @@
     .nav-cta::after { display: none !important; }
     .nav-cta:hover { background: var(--accent) !important; color: var(--bg) !important; }
 
+    .nav-toggle {
+      display: none;
+      width: 34px;
+      height: 28px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 0;
+    }
+    .nav-toggle span {
+      display: block;
+      height: 3px;
+      border-radius: 4px;
+      background-color: var(--text);
+      transition: transform 0.25s, opacity 0.25s;
+    }
+
     /* ── HERO — lado a lado, sem sobreposição ── */
     .hero {
       padding-top: var(--nav-h);
@@ -507,13 +526,16 @@
     /* ── RESPONSIVE ── */
     @media (max-width: 860px) {
       nav { padding: 0 24px; }
-      .nav-links { gap: 16px; }
+      .nav-toggle { display: flex; }
+      .nav-links { position: fixed; top: var(--nav-h); left: 0; right: 0; background: rgba(11,11,11,0.98); border-top: 1px solid var(--border); flex-direction: column; gap: 4px; padding: 10px 16px; display: none; z-index: 90; }
+      .nav-links.show { display: flex; }
+      .nav-links a { padding: 10px 12px; border-radius: 4px; background: rgba(255,255,255,0.05); }
+      .nav-links a.nav-cta { margin-top: 8px; }
+
       .hero { flex-direction: column; }
       .hero-left { padding: 64px 24px 48px; }
-      .hero-right { min-height: 60vw; border-left: none; border-top: 1px solid var(--border); }
-      #portfolio, #featured, .footer-bottom { padding-left: 24px; padding-right: 24px; }
-      .about-section { padding-left: 24px; padding-right: 24px; }
-      .stats-bar { padding-left: 24px; padding-right: 24px; }
+      .hero-right { min-height: 60vw; border-left: none; border-top: 1px solid var(--border); margin-top: 16px; }
+      #portfolio, #featured, .footer-bottom, .about-section, .stats-bar { padding-left: 24px; padding-right: 24px; }
       .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
       .featured-layout { grid-template-columns: 1fr; }
       .feat-cell.tall { aspect-ratio: 16/9; }
@@ -526,34 +548,40 @@
     }
 
     @media (max-width: 600px) {
-      :root { --nav-h: 60px; }
-      nav { height: var(--nav-h); padding: 0 14px; }
-      .nav-logo { font-size: 1.1rem; }
-      .nav-links { gap: 10px; flex-wrap: wrap; justify-content: center; }
-      .nav-links a { font-size: 0.65rem; }
+      :root { --nav-h: 58px; }
+      nav { height: var(--nav-h); padding: 0 12px; }
+      .nav-logo { font-size: 1.05rem; }
+      .nav-links { top: var(--nav-h); gap: 3px; }
+      .nav-links a { font-size: 0.72rem; padding: 9px 12px; }
 
-      .hero { flex-direction: column; }
-      .hero-left { padding: 48px 16px 40px; text-align: center; }
-      .hero-title { font-size: clamp(2.5rem, 8vw, 4rem); }
-      .hero-desc { margin-inline: auto; max-width: 90%; }
+      .hero-left { padding: 42px 14px 28px; text-align: center; }
+      .hero-title { font-size: clamp(2rem, 9vw, 3.2rem); }
+      .hero-desc { margin-inline: auto; max-width: 92%; font-size: 0.86rem; }
       .hero-actions { flex-direction: column; gap: 10px; align-items: center; }
-      .hero-right { min-height: 280px; border-left: none; border-top: 1px solid var(--border); margin-top: 16px; }
+      .hero-right { min-height: 220px; border-left: none; border-top: 1px solid var(--border); margin-top: 12px; }
 
-      .portfolio-header, #portfolio, #featured, .about-section, .stats-bar, .footer-bottom { padding-left: 16px; padding-right: 16px; }
+      .portfolio-header, #portfolio, #featured, .about-section, .stats-bar, .footer-bottom { padding-left: 12px; padding-right: 12px; }
       .portfolio-grid { grid-template-columns: 1fr; }
-      .stats-bar { grid-template-columns: 1fr; padding: 28px 12px; }
-      .stat-item { padding: 18px 12px; border-left: none; border-top: 1px solid var(--border); }
-      .stat-item:first-child { border-top: none; }
-      .about-section { grid-template-columns: 1fr; gap: 32px; }
-      .about-photo { height: auto; min-height: 250px; }
+      .stats-bar { grid-template-columns: 1fr; padding: 22px 10px; }
+      .stat-item { padding: 16px 10px; }
+      .about-section { grid-template-columns: 1fr; gap: 28px; }
+      .about-photo { min-height: 200px; }
       .about-right .about-details { grid-template-columns: 1fr; }
 
-      .footer-bottom { flex-direction: column; gap: 14px; text-align: center; }
-      .footer-copy { font-size: 0.68rem; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+      .footer-copy { font-size: 0.66rem; }
       .social-links { justify-content: center; }
 
       img { max-width: 100%; height: auto; }
       button, .btn-primary, .btn-ghost { touch-action: manipulation; }
+    }
+
+    @media (max-width: 420px) {
+      .hero-left { padding: 34px 12px 24px; }
+      .hero-desc { max-width: 100%; }
+      .hero-actions { width: 100%; }
+      .btn-primary, .btn-ghost { width: 100%; justify-content: center; }
+      .nav-links a { font-size: 0.68rem; padding: 8px 10px; }
     }
   </style>
 </head>
@@ -568,7 +596,12 @@
 <!-- ── NAV ── -->
 <nav id="mainNav">
   <a href="#home" class="nav-logo">Lako<span> </span>Fotografia</a>
-  <div class="nav-links">
+  <button id="navToggle" class="nav-toggle" aria-label="Abrir menu" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="nav-links" id="mobileNavLinks">
     <a href="#portfolio">Portfólio</a>
     <a href="#featured">Destaques</a>
     <a href="#sobre">Sobre</a>
@@ -789,9 +822,30 @@ function closeLb() { document.getElementById('lightbox').classList.remove('open'
 document.getElementById('lightbox').addEventListener('click', e => { if (e.target === e.currentTarget) closeLb(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
 
+/* ── Nav toggle (mobile) ── */
+const navToggle = document.getElementById('navToggle');
+const mobileNavLinks = document.getElementById('mobileNavLinks');
+navToggle.addEventListener('click', () => {
+  const isOpen = mobileNavLinks.classList.toggle('show');
+  navToggle.setAttribute('aria-expanded', String(isOpen));
+});
+
+mobileNavLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    if (mobileNavLinks.classList.contains('show')) {
+      mobileNavLinks.classList.remove('show');
+      navToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+});
+
 /* ── Nav scroll ── */
 window.addEventListener('scroll', () => {
   document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50);
+  if (window.scrollY > 0 && mobileNavLinks.classList.contains('show')) {
+    mobileNavLinks.classList.remove('show');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }
 });
 
 /* ── Filtros ── */
