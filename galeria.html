@@ -1,0 +1,21 @@
+<div id="cabecalho-galeria">
+  <h1 id="titulo-album">Nome do Evento</h1>
+  <p id="info-album">Categoria | Ano</p>
+</div>
+
+<div class="grid-fotos" id="gridFotos">
+  </div>
+
+<script>
+  // 1. Pega o ID que veio na URL (ex: galeria.html?id=1)
+  const parametros = new URLSearchParams(window.location.search);
+  const idSelecionado = parametros.get('id');
+
+  // 2. Procura os dados desse álbum na sua lista (aquela que fizemos antes)
+  const dados = álbunsLako.find(a => a.id == idSelecionado);
+
+  // 3. Preenche a página com os dados da Lako
+  document.getElementById('titulo-album').innerText = dados.titulo;
+  
+  // 4. Aqui você faria um loop para exibir todas as fotos daquele álbum específico
+</script>
