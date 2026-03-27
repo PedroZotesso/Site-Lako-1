@@ -442,7 +442,7 @@
     }
     .about-bio {
       color: var(--muted);
-      font-size: 0.93rem;
+      font-size: 1rem;
       line-height: 1.9;
       margin-bottom: 24px;
     }
@@ -457,7 +457,7 @@
     }
     .about-right { display: flex; flex-direction: column; gap: 16px; }
     .about-photo {
-      aspect-ratio: 4 / 5;
+      aspect-ratio: 3 / 4;
       background: var(--surface2);
       border: 1px solid var(--border);
       overflow: hidden;
@@ -623,12 +623,7 @@
   <div class="hero-right">
     <div class="hero-upload-area" id="heroCover">
       <img src="bebe.jpeg" alt="Foto de capa">
-      <div class="upload-hint" id="heroCoverHint">
-        <div class="upload-icon-big"></div>
-        <div class="upload-hint-text"></div>
-      </div>
     </div>
-    <input type="file" id="heroCoverInput" accept="image/*" style="display:none" onchange="loadHero(this)" />
   </div>
 </div>
 
@@ -663,22 +658,19 @@
   <h2 class="section-title">Imagens em Destaque</h2>
   <div class="featured-layout">
     <!-- célula grande à esquerda -->
-    <div class="feat-cell tall" id="fc0" onclick="featClick(0)">
+    <div class="feat-cell tall" id="fc0">
       <div class="feat-placeholder" id="fp0"><span class="plus">◫</span><span class="feat-label">Destaque principal</span></div>
       <div class="feat-caption"><div class="feat-caption-title">Título da Foto</div><div class="feat-caption-cat">Retrato · 2024</div></div>
-      <input type="file" id="ff0" accept="image/*" style="display:none" onchange="loadFeat(0,this)" />
     </div>
     <!-- coluna da direita: duas células empilhadas -->
     <div class="feat-right-col">
-      <div class="feat-cell short" id="fc1" onclick="featClick(1)">
+      <div class="feat-cell short" id="fc1">
         <div class="feat-placeholder" id="fp1"><span class="plus">◫</span><span class="feat-label">Destaque 2</span></div>
         <div class="feat-caption"><div class="feat-caption-title">Título da Foto</div><div class="feat-caption-cat">Paisagem · 2024</div></div>
-        <input type="file" id="ff1" accept="image/*" style="display:none" onchange="loadFeat(1,this)" />
       </div>
-      <div class="feat-cell short" id="fc2" onclick="featClick(2)">
+      <div class="feat-cell short" id="fc2">
         <div class="feat-placeholder" id="fp2"><span class="plus">◫</span><span class="feat-label">Destaque 3</span></div>
         <div class="feat-caption"><div class="feat-caption-title">Título da Foto</div><div class="feat-caption-cat">Evento · 2024</div></div>
-        <input type="file" id="ff2" accept="image/*" style="display:none" onchange="loadFeat(2,this)" />
       </div>
     </div>
   </div>
@@ -689,7 +681,7 @@
   <div class="about-section">
     <div class="about-left">
       <p class="section-label">Sobre o fotógrafo</p>
-      <h2 class="about-title">Sua história é <em style="font-style:italic;font-family:'Cormorant Garamond',serif">única</em><br>Minha luz a torna eterna.</h2>
+      <h2 class="about-title">Sua história é <em style="font-style:italic;font-family:'Cormorant Garamond',serif">única</em><br>Minha luz a torna <em style="font-style:italic;font-family:'Cormorant Garamond',serif">eterna</em>.</h2>
       <p class="about-bio">Minha jornada no mundo da fotografia começou cedo, aos 17 anos, em 1º de novembro de 1999. Desde os meus primeiros passos no laboratório, passando pela assistência de filmagem e fotografia, aprendi que cada detalhe é fundamental para eternizar um momento.</p>
       <p class="about-bio">Após anos de dedicação e aprendizado constante, em 2012, nasceu Lako Fotografia. Hoje, com a experiência de quem já realizou mais de 1.000 eventos, encaro cada novo projeto com o mesmo entusiasmo do início, buscando sempre capturar a essência e a emoção de cada história que tenho a honra de contar.</p>
       <div class="about-signature">Lako Fotografia</div>
@@ -702,11 +694,6 @@
     <div class="about-right">
       <div class="about-photo" id="aboutPhoto">
         <img src="foto.jpg.jpeg" alt="Foto do fotógrafo">
-        <div class="about-photo-hint" id="aboutHint">
-          <span class="plus"></span>
-          <span class="hint-text"></span>
-        </div>
-        <input type="file" id="aboutInput" accept="image/*" style="display:none" onchange="loadAbout(this)" />
       </div>
       <div class="about-details">
         <div class="detail-item"><div class="detail-label">Localização</div><div class="detail-value">Ivinhema, MS</div></div>
@@ -740,81 +727,9 @@ labels.forEach((lbl, i) => {
       <span class="cell-label">${lbl}</span>
     </div>
     <div class="cell-hover-overlay"><span>${lbl}</span></div>
-    <input type="file" id="pf${i}" accept="image/*" style="display:none" onchange="loadPc(${i},this)" />
   `;
-  cell.addEventListener('click', () => pcClick(i));
   grid.appendChild(cell);
 });
-
-function pcClick(i) {
-  const cell = document.getElementById('pc' + i);
-  const img = cell.querySelector('img');
-  if (img) openLb(img.src);
-  else document.getElementById('pf' + i).click();
-}
-function loadPc(i, input) {
-  if (!input.files[0]) return;
-  const r = new FileReader();
-  r.onload = e => {
-    const cell = document.getElementById('pc' + i);
-    document.getElementById('pph' + i).style.display = 'none';
-    let img = cell.querySelector('img');
-    if (!img) { img = document.createElement('img'); cell.insertBefore(img, cell.firstChild); }
-    img.src = e.target.result;
-    cell.onclick = () => openLb(img.src);
-  };
-  r.readAsDataURL(input.files[0]);
-}
-
-/* ── Hero ── */
-function loadHero(input) {
-  if (!input.files[0]) return;
-  const r = new FileReader();
-  r.onload = e => {
-    const area = document.getElementById('heroCover');
-    document.getElementById('heroCoverHint').classList.add('hidden');
-    let img = area.querySelector('img');
-    if (!img) { img = document.createElement('img'); area.appendChild(img); }
-    img.src = e.target.result;
-    area.onclick = () => openLb(img.src);
-  };
-  r.readAsDataURL(input.files[0]);
-}
-
-/* ── Destaques ── */
-function featClick(i) {
-  const cell = document.getElementById('fc' + i);
-  const img = cell.querySelector('img');
-  if (img) openLb(img.src);
-  else document.getElementById('ff' + i).click();
-}
-function loadFeat(i, input) {
-  if (!input.files[0]) return;
-  const r = new FileReader();
-  r.onload = e => {
-    const cell = document.getElementById('fc' + i);
-    document.getElementById('fp' + i).style.display = 'none';
-    let img = cell.querySelector('img');
-    if (!img) { img = document.createElement('img'); cell.insertBefore(img, cell.firstChild); }
-    img.src = e.target.result;
-    cell.onclick = () => openLb(img.src);
-  };
-  r.readAsDataURL(input.files[0]);
-}
-
-/* ── Sobre ── */
-function loadAbout(input) {
-  if (!input.files[0]) return;
-  const r = new FileReader();
-  r.onload = e => {
-    document.getElementById('aboutHint').style.display = 'none';
-    const ph = document.getElementById('aboutPhoto');
-    let img = ph.querySelector('img');
-    if (!img) { img = document.createElement('img'); ph.appendChild(img); }
-    img.src = e.target.result;
-  };
-  r.readAsDataURL(input.files[0]);
-}
 
 /* ── Lightbox ── */
 function openLb(src) { document.getElementById('lbImg').src = src; document.getElementById('lightbox').classList.add('open'); }
